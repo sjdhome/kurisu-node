@@ -19,6 +19,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "koa": "^2.14.2"
+    "koa": "^2.14.2",
+    "path-to-regexp": "^6.2.1"
   }
 }
