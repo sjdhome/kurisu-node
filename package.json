@@ -5,12 +5,18 @@
   "main": "out/main.js",
   "scripts": {
     "build": "tsc",
+    "start": "NODE_ENV=production node .",
+    "dev": "NODE_ENV=development node .",
     "prettier": "prettier --write ."
   },
   "author": "sjdhome",
   "devDependencies": {
+    "@types/koa": "^2.13.12",
     "@types/node": "^20.10.4",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "koa": "^2.14.2"
   }
 }
