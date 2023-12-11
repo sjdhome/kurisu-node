@@ -1,0 +1,16 @@
+{
+  "name": "kurisu-node",
+  "version": "1.0.0",
+  "description": "kurisu backend server",
+  "main": "out/main.js",
+  "scripts": {
+    "build": "tsc",
+    "prettier": "prettier --write ."
+  },
+  "author": "sjdhome",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
+  }
+}
