@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "out"
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "outDir": "out",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }
