@@ -1,9 +1,6 @@
-type TagId = string;
-
 interface Tag {
-  id: TagId;
+  id: string;
   name: string;
 }
 
-export { TagId };
-export default Tag;
+export { Tag };

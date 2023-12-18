@@ -1,14 +1,12 @@
-import { TagId } from "./tag";
-
-type PostId = string;
+import { Tag } from "./tag";
 
 interface Post {
-  id: PostId;
+  id: string;
   title: string;
   created: string;
   edited: string;
   author: string;
-  tags: TagId[];
+  tags: Tag[];
   description: string;
   commentable: boolean;
   visible: boolean;
@@ -16,5 +14,4 @@ interface Post {
   content: string;
 }
 
-export { PostId };
-export default Post;
+export { Post };

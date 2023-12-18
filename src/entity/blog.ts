@@ -1,11 +1,10 @@
-import Post from "./post";
-import User from "./user";
+import { Post } from "./post";
 
 interface Blog {
   name: string;
   motto: string;
-  admin: User;
+  adminUsername: string;
   posts: Post[];
 }
 
-export default Blog;
+export { Blog };

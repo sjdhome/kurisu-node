@@ -5,4 +5,4 @@ interface User {
   hashedPassword: string;
 }
 
-export default User;
+export { User };
