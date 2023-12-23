@@ -1,8 +1,14 @@
-interface User {
-  username: string;
-  nickname: string;
-  avatarUrl: string;
-  hashedPassword: string;
+enum Permission {
+  User,
+  Admin,
 }
 
-export { User };
+interface User {
+  id: number;
+  username: string;
+  avatar: URL;
+  password: string;
+  permission: Permission;
+}
+
+export { User, Permission };
