@@ -1,26 +1,22 @@
 import process from "process";
-import Koa, { Context, Next } from "koa";
-import Router from "@koa/router";
 import logger from "./logger.js";
-import { getPost, getPosts } from "./controller/post.js";
-import { getPostsByTag, getTagsByPost } from "./controller/post_tag.js";
+import fastify from "fastify";
+import { getPosts, getPost, getPostContent } from "./controller/v1/post.js";
 
-const app = new Koa();
-const port = process.env.PORT ?? 3000;
+const app = fastify();
+const port = Number.parseInt(process.env.PORT || "3000");
 
-const router = new Router();
-router.get("/blog/post", getPosts);
-router.get("/blog/post/:id", getPost);
-router.get("/blog/post/:id/tag", getTagsByPost);
-router.get("/blog/tag/:id/post", getPostsByTag);
+app.get("/v1/blog/post/", getPosts);
+app.get("/v1/blog/post/:id/", getPost);
+app.get("/v1/blog/post/:id/content/", getPostContent);
 
-const request2log = async (ctx: Context, next: Next) => {
-  logger.info(ctx);
-  await next();
-};
+logger.info(`Server listening on port ${port}.`);
+try {
+  await app.listen({ port });
+} catch (err) {
+  logger.error("Server down!");
+  logger.error(err);
+  process.exit(1);
+}
 
-app
-  .use(request2log)
-  .use(router.routes())
-  .use(router.allowedMethods())
-  .listen(port);
+export { app };
