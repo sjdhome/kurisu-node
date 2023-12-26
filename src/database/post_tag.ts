@@ -59,4 +59,6 @@ class PostTagRepositoryImpl implements PostTagRepository {
   }
 }
 
-export { PostTagRepository, PostTagRepositoryImpl };
+const postTagRepository = new PostTagRepositoryImpl();
+
+export { PostTagRepository, PostTagRepositoryImpl, postTagRepository };

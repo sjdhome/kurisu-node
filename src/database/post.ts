@@ -106,4 +106,6 @@ class PostRepositoryImpl implements PostRepository {
   }
 }
 
-export { PostRepository, PostRepositoryImpl };
+const postRepository = new PostRepositoryImpl();
+
+export { PostRepository, PostRepositoryImpl, postRepository };

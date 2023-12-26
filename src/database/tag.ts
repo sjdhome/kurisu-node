@@ -90,4 +90,6 @@ class TagRepositoryImpl implements TagRepository {
   }
 }
 
-export { TagRepository, TagRepositoryImpl };
+const tagRepository = new TagRepositoryImpl();
+
+export { TagRepository, TagRepositoryImpl, tagRepository };
