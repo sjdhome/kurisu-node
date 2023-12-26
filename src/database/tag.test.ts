@@ -40,7 +40,7 @@ describe("find", async () => {
     const tag = await tagRepository.find("default");
     expect(mocks.query).toHaveBeenCalledWith(
       "SELECT * FROM tag WHERE id = $1",
-      ["default"]
+      ["default"],
     );
     expect(tag).toEqual({
       id: "default",
@@ -104,20 +104,20 @@ describe("update", async () => {
     await tagRepository.update("default", { name: "Fault" });
     expect(mocks.query).toHaveBeenCalledWith(
       "UPDATE tag SET name = $1 WHERE id = $2",
-      ["Fault", "default"]
+      ["Fault", "default"],
     );
     expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {
     expect(tagRepository.update("", { name: "Default" })).rejects.toThrowError(
-      "Empty id"
+      "Empty id",
     );
   });
 
   test("empty tag", async () => {
     expect(
-      tagRepository.update("default", { id: "fault" })
+      tagRepository.update("default", { id: "fault" }),
     ).rejects.toThrowError("Empty tag");
   });
 });
@@ -127,26 +127,26 @@ describe("create", async () => {
     await tagRepository.create({ id: "default", name: "Default" });
     expect(mocks.query).toHaveBeenCalledWith(
       "INSERT INTO tag (id, name) VALUES ($1, $2)",
-      ["default", "Default"]
+      ["default", "Default"],
     );
     expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {
     expect(
-      tagRepository.create({ id: "", name: "Default" })
+      tagRepository.create({ id: "", name: "Default" }),
     ).rejects.toThrowError("Empty id or name");
   });
 
   test("empty name", async () => {
     expect(
-      tagRepository.create({ id: "default", name: "" })
+      tagRepository.create({ id: "default", name: "" }),
     ).rejects.toThrowError("Empty id or name");
   });
 
   test("both empty", async () => {
     expect(tagRepository.create({ id: "", name: "" })).rejects.toThrowError(
-      "Empty id or name"
+      "Empty id or name",
     );
   });
 });

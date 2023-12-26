@@ -41,7 +41,7 @@ class PostTagRepositoryImpl implements PostTagRepository {
     const client = await getClient();
     await client.query(
       "INSERT INTO post_tag (post_id, tag_id) VALUES ($1, $2)",
-      [postId, tagId]
+      [postId, tagId],
     );
     client.release();
   }
@@ -53,7 +53,7 @@ class PostTagRepositoryImpl implements PostTagRepository {
     const client = await getClient();
     await client.query(
       "DELETE FROM post_tag WHERE post_id = $1 AND tag_id = $2",
-      [postId, tagId]
+      [postId, tagId],
     );
     client.release();
   }

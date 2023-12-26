@@ -74,7 +74,7 @@ class PostRepositoryImpl implements PostRepository {
     }
     await client.query(
       `UPDATE post SET ${keys.join(", ")} WHERE id = $${keys.length + 1}`,
-      [...values, id]
+      [...values, id],
     );
     client.release();
   }
@@ -94,7 +94,7 @@ class PostRepositoryImpl implements PostRepository {
         post.visible,
         post.pinToTop,
         post.content,
-      ]
+      ],
     );
     client.release();
   }

@@ -6,7 +6,7 @@ import { postTagService } from "../../service/post_tag.js";
 // URL: /v1/blog/post/
 async function getPosts(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<string> {
   const posts = await postService.getPosts();
   const postsWithTag = await Promise.all(
@@ -14,7 +14,7 @@ async function getPosts(
       const tags = await postTagService.getTagsByPost(post.id);
       const tagNames = tags.map((tag) => tag.name);
       return { ...post, tags: tagNames };
-    })
+    }),
   );
   reply.type("application/json");
   return JSON.stringify(postsWithTag);
@@ -23,7 +23,7 @@ async function getPosts(
 // URL: /v1/blog/post/:id/
 async function getPost(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<string | undefined> {
   const { id } = request.params as { id: string };
   const post = await postService.getPost(id);
@@ -44,7 +44,7 @@ async function getPost(
 // URL: /v1/blog/post/content/
 async function getPostContent(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ): Promise<string | undefined> {
   const { id } = request.params as { id: string };
   const post = await postService.getPost(id);

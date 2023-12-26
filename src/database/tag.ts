@@ -63,7 +63,7 @@ class TagRepositoryImpl implements TagRepository {
       `UPDATE tag SET ${conditions.join(", ")} WHERE id = $${
         conditions.length + 1
       }`,
-      [...values, id]
+      [...values, id],
     );
     client.release();
   }

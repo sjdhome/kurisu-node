@@ -48,7 +48,7 @@ describe("find", async () => {
     const post = await postRepository.find("hello-world");
     expect(mocks.query).toHaveBeenCalledWith(
       "SELECT * FROM post WHERE id = $1",
-      ["hello-world"]
+      ["hello-world"],
     );
     expect(post).toEqual({
       id: "hello-world",
@@ -70,7 +70,7 @@ describe("find", async () => {
     const post = await postRepository.find("hello-world");
     expect(mocks.query).toHaveBeenCalledWith(
       "SELECT * FROM post WHERE id = $1",
-      ["hello-world"]
+      ["hello-world"],
     );
     expect(post).toBeNull();
     expect(mocks.release).toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe("update", async () => {
     });
     expect(mocks.query).toHaveBeenCalledWith(
       "UPDATE post SET title = $1, pin_to_top = $2, content = $3 WHERE id = $4",
-      ["Goodbye World", true, "Never", "hello-world"]
+      ["Goodbye World", true, "Never", "hello-world"],
     );
     await postRepository.update("hello-world", {
       title: "Goodbye World",
@@ -155,20 +155,20 @@ describe("update", async () => {
     });
     expect(mocks.query).toHaveBeenCalledWith(
       "UPDATE post SET title = $1, content = $2, pin_to_top = $3 WHERE id = $4",
-      ["Goodbye World", "Never", true, "hello-world"]
+      ["Goodbye World", "Never", true, "hello-world"],
     );
     expect(mocks.release).toHaveBeenCalledTimes(2);
   });
 
   test("empty id", async () => {
     expect(
-      postRepository.update("", { title: "Goodbye World" })
+      postRepository.update("", { title: "Goodbye World" }),
     ).rejects.toThrowError("Empty id");
   });
 
   test("empty post", async () => {
     expect(postRepository.update("hello-world", {})).rejects.toThrowError(
-      "Empty post"
+      "Empty post",
     );
   });
 });
