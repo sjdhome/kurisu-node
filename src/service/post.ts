@@ -1,58 +1,41 @@
-import { PostRepository } from "../database/post";
-import { Post } from "../entity/post";
-import logger from "../logger";
-import { TagService } from "./tag";
+import { postRepository } from "../database/post.js";
+import { Post } from "../entity/post.js";
 
 interface PostService {
-  createPost(post: Post): void;
-  removePost(id: string): void;
-  updatePost(id: string, post: Partial<Post>): void;
-  getPosts(): Post[];
-  getPost(id: string): Post | null;
+  createPost(post: Post): Promise<void>;
+  removePost(id: string): Promise<void>;
+  updatePost(id: string, post: Partial<Post>): Promise<void>;
+  getPosts(): Promise<Post[]>;
+  getPost(id: string): Promise<Post | null>;
+  getPostsByYear(year: number): Promise<Post[]>;
 }
 
 class PostServiceImpl implements PostService {
-  private repository: PostRepository;
-  private tagService: TagService;
-
-  constructor(repository: PostRepository, tagService: TagService) {
-    this.repository = repository;
-    this.tagService = tagService;
+  async createPost(post: Post): Promise<void> {
+    await postRepository.create(post);
   }
 
-  createPost(post: Post): void {
-    this.repository.create(post);
+  async removePost(id: string): Promise<void> {
+    await postRepository.remove(id);
   }
 
-  removePost(id: string): void {
-    this.repository.remove(id);
+  async updatePost(id: string, post: Partial<Post>): Promise<void> {
+    await postRepository.update(id, post);
   }
 
-  updatePost(id: string, post: Partial<Post>): void {
-    this.repository.update(id, post);
+  async getPosts(): Promise<Post[]> {
+    return await postRepository.findAll();
   }
 
-  getPosts(): Post[] {
-    const posts = this.repository.findAll();
-    return posts.map((post) => {
-      return {
-        ...post,
-        tags: this.tagService.getTagsByPost(post.id),
-      };
-    });
+  async getPost(id: string): Promise<Post | null> {
+    return await postRepository.find(id);
   }
 
-  getPost(id: string): Post | null {
-    const post = this.repository.find(id);
-    if (post === null) {
-      logger.warn(`Unable to find post ${id}`);
-      return null;
-    }
-    return {
-      ...post,
-      tags: this.tagService.getTagsByPost(post.id),
-    };
+  async getPostsByYear(year: number): Promise<Post[]> {
+    throw new Error("Not implemented");
   }
 }
 
-export { PostService, PostServiceImpl };
+const postService = new PostServiceImpl();
+
+export { PostService, postService };
