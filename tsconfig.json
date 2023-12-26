@@ -5,7 +5,8 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "outDir": "out",
-    "strict": true
+    "strict": true,
+    "types": ["vitest/importMeta"]
     // "noUnusedLocals": true,
     // "noUnusedParameters": true
   }
