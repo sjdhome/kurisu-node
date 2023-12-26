@@ -9,6 +9,7 @@ const logger =
             colorize: true,
           },
         },
+        level: "debug",
       })
     : pino();
 
