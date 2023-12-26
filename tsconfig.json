@@ -6,9 +6,9 @@
     "esModuleInterop": true,
     "outDir": "out",
     "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "types": ["vitest/importMeta"]
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true
   },
   "include": ["src/**/*"]
 }
