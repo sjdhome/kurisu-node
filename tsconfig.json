@@ -9,5 +9,6 @@
     "types": ["vitest/importMeta"]
     // "noUnusedLocals": true,
     // "noUnusedParameters": true
-  }
+  },
+  "include": ["src/**/*"]
 }
