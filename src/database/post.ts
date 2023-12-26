@@ -1,5 +1,5 @@
 import { Post } from "../entity/post.js";
-import { getClient } from "./postgresql.js";
+import { getClient } from "../postgresql.js";
 import { snakeCase } from "change-case";
 
 interface PostRepository {
@@ -12,6 +12,9 @@ interface PostRepository {
 
 class PostRepositoryImpl implements PostRepository {
   async find(id: string): Promise<Post | null> {
+    if (id.length === 0) {
+      throw new Error("Empty id");
+    }
     const client = await getClient();
     const result = await client.query("SELECT * FROM post WHERE id = $1", [id]);
     client.release();
@@ -56,13 +59,23 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   async update(id: string, post: Partial<Omit<Post, "id">>): Promise<void> {
-    const client = await getClient();
-    for (const [key, value] of Object.entries(post)) {
-      await client.query(
-        `UPDATE post SET ${snakeCase(key)} = $1 WHERE id = $2`,
-        [value, id],
-      );
+    if (id.length === 0) {
+      throw new Error("Empty id");
     }
+    if (Object.entries(post).length === 0) {
+      throw new Error("Empty post");
+    }
+    const client = await getClient();
+    const keys: string[] = [];
+    const values: any[] = [];
+    for (const [key, value] of Object.entries(post)) {
+      keys.push(`${snakeCase(key)} = $${keys.length + 1}`);
+      values.push(value);
+    }
+    await client.query(
+      `UPDATE post SET ${keys.join(", ")} WHERE id = $${keys.length + 1}`,
+      [...values, id]
+    );
     client.release();
   }
 
@@ -81,7 +94,7 @@ class PostRepositoryImpl implements PostRepository {
         post.visible,
         post.pinToTop,
         post.content,
-      ],
+      ]
     );
     client.release();
   }
@@ -93,4 +106,4 @@ class PostRepositoryImpl implements PostRepository {
   }
 }
 
-export { PostRepository };
+export { PostRepository, PostRepositoryImpl };
