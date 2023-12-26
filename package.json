@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=production node .",
     "dev": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node .\"",
     "prettier": "prettier --write .",
-    "test": "vitest",
+    "test": "cross-env NODE_ENV=development vitest",
     "typecheck": "tsc --noEmit"
   },
   "author": "sjdhome",
