@@ -41,7 +41,7 @@ describe("getPost", async () => {
     });
     mocks.getTagsByPost.mockResolvedValueOnce([{ id: "none", name: "无" }]);
     const reply = {
-      type: vi.fn((contentType: string): FastifyReply => reply)
+      type: vi.fn((contentType: string): FastifyReply => reply),
     } as unknown as FastifyReply;
     const response = await getPost(
       { params: { id: "hello-world" } } as FastifyRequest,
@@ -71,7 +71,7 @@ describe("getPost", async () => {
     );
     expect(response).toBeUndefined();
     expect(reply.statusCode).toBe(404);
-    expect(reply.type).toBeCalledTimes(0)
+    expect(reply.type).toBeCalledTimes(0);
   });
 });
 
@@ -90,7 +90,7 @@ describe("getPostContent", async () => {
       content: "Hello!",
     });
     mocks.getTagsByPost.mockResolvedValueOnce([{ id: "none", name: "无" }]);
-    const reply = { type: vi.fn()} as unknown as FastifyReply;
+    const reply = { type: vi.fn() } as unknown as FastifyReply;
     const response = await getPostContent(
       { params: { id: "hello-world" } } as FastifyRequest,
       reply,
@@ -109,6 +109,6 @@ describe("getPostContent", async () => {
     );
     expect(response).toBeUndefined();
     expect(reply.statusCode).toBe(404);
-    expect(reply.type).toBeCalledTimes(0)
+    expect(reply.type).toBeCalledTimes(0);
   });
-})
+});
