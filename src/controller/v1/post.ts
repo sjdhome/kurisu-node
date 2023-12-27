@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { postService } from "../../service/post.js";
+import { Post } from "../../entity/post.js";
 import logger from "../../logger.js";
+import { postService } from "../../service/post.js";
 import { postTagService } from "../../service/post_tag.js";
 
 // URL: /v1/blog/post/
@@ -32,7 +33,9 @@ async function getPost(
     reply.statusCode = 404;
     return;
   }
-  const postWithTag: any = {
+  const postWithTag: Omit<Post & { tags: string[] }, "content"> & {
+    content: string | undefined;
+  } = {
     ...post,
     tags: (await postTagService.getTagsByPost(post.id)).map((tag) => tag.name),
   };
@@ -41,7 +44,7 @@ async function getPost(
   return JSON.stringify(postWithTag);
 }
 
-// URL: /v1/blog/post/content/
+// URL: /v1/blog/post/:id/content/
 async function getPostContent(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -57,4 +60,4 @@ async function getPostContent(
   return post.content;
 }
 
-export { getPosts, getPost, getPostContent };
+export { getPost, getPostContent, getPosts };
