@@ -14,7 +14,11 @@ async function getPosts(
     posts.map(async (post) => {
       const tags = await postTagService.getTagsByPost(post.id);
       const tagNames = tags.map((tag) => tag.name);
-      return { ...post, tags: tagNames };
+      const postWithTags: Omit<Post & { tags: string[] }, "content"> & {
+        content: string | undefined;
+      } = { ...post, tags: tagNames };
+      delete postWithTags.content;
+      return;
     }),
   );
   reply.type("application/json");
