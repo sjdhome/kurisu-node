@@ -10,5 +10,6 @@
     "noUnusedParameters": false,
     "types": ["vitest/importMeta"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.*", "src/**/*.spec.*"]
 }
