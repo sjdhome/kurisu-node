@@ -1,10 +1,11 @@
 import { describe, test, expect, vi } from "vitest";
-import { getPost, getPostContent } from "./post.js";
+import { getPost, getPostContent, getPosts } from "./post.js";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 const mocks = vi.hoisted(() => {
   return {
     getPost: vi.fn(),
+    getPosts: vi.fn(),
     getTagsByPost: vi.fn(),
   };
 });
@@ -13,6 +14,7 @@ vi.mock("../../service/post.js", () => {
   return {
     postService: {
       getPost: mocks.getPost,
+      getPosts: mocks.getPosts,
     },
   };
 });
@@ -23,6 +25,54 @@ vi.mock("../../service/post_tag.js", () => {
       getTagsByPost: mocks.getTagsByPost,
     },
   };
+});
+
+describe("getPosts", async () => {
+  test("should return posts with tags", async () => {
+    mocks.getPosts.mockResolvedValueOnce([
+      {
+        id: "hello-world",
+        title: "Hello world",
+        created: "2023-03-13T07:00:00.000Z",
+        edited: "2023-03-13T07:00:00.000Z",
+        author: "sjdhome",
+        description: "你好，世界！这是本博客的第一篇文章。",
+        commentable: true,
+        visible: true,
+        pinToTop: false,
+        content: "Hello!",
+      },
+    ]);
+    mocks.getTagsByPost.mockResolvedValueOnce([{ id: "none", name: "无" }]);
+    const reply = {
+      type: vi.fn((contentType: string): FastifyReply => reply),
+    } as unknown as FastifyReply;
+    const response = await getPosts({} as FastifyRequest, reply);
+    expect(JSON.parse(response as string)).toEqual([
+      {
+        id: "hello-world",
+        title: "Hello world",
+        created: "2023-03-13T07:00:00.000Z",
+        edited: "2023-03-13T07:00:00.000Z",
+        author: "sjdhome",
+        description: "你好，世界！这是本博客的第一篇文章。",
+        commentable: true,
+        visible: true,
+        pinToTop: false,
+        tags: ["无"],
+      },
+    ]);
+    expect(reply.statusCode).toBeUndefined();
+    expect(reply.type).toBeCalledWith("application/json");
+  });
+  test("should return empty array when no post", async () => {
+    const reply = { statusCode: 200, type: vi.fn() } as unknown as FastifyReply;
+    mocks.getPosts.mockResolvedValueOnce([]);
+    const response = await getPosts({} as FastifyRequest, reply);
+    expect(response).toBe("[]");
+    expect(reply.statusCode).toBe(200);
+    expect(reply.type).toBeCalledWith("application/json");
+  });
 });
 
 describe("getPost", async () => {

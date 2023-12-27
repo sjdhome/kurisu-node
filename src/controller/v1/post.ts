@@ -18,7 +18,7 @@ async function getPosts(
         content: string | undefined;
       } = { ...post, tags: tagNames };
       delete postWithTags.content;
-      return;
+      return postWithTags;
     }),
   );
   reply.type("application/json");
