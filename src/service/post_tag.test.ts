@@ -64,7 +64,7 @@ describe("getPostsByTag", async () => {
     const result = [
       { id: "hello-world" },
       { id: "goodbye-world" },
-      { id: "hello-again-world"},
+      { id: "hello-again-world" },
     ];
     for (const post of result) {
       mocks.postFind.mockResolvedValueOnce(post);
