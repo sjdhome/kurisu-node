@@ -2,7 +2,7 @@
   "name": "kurisu-node",
   "version": "1.0.0",
   "description": "kurisu backend server",
-  "main": "out/main.js",
+  "main": "dist/main.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
