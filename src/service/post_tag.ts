@@ -21,6 +21,9 @@ class PostTagServiceImpl implements PostTagService {
   }
 
   async getTagsByPost(postId: string): Promise<Tag[]> {
+    if (postId.length === 0) {
+      throw new Error("Empty postId");
+    }
     const postTags = await postTagRepository.find({ postId });
     const tagIds = postTags.map((postTag) => postTag.tagId);
     const tags = [];
@@ -35,6 +38,9 @@ class PostTagServiceImpl implements PostTagService {
   }
 
   async getPostsByTag(tagId: string): Promise<Post[]> {
+    if (tagId.length === 0) {
+      throw new Error("Empty tagId");
+    }
     const postTags = await postTagRepository.find({ tagId });
     const postIds = postTags.map((postTag) => postTag.postId);
     const posts = [];
