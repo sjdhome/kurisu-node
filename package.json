@@ -1,6 +1,7 @@
 {
   "name": "kurisu-node",
   "version": "1.0.0",
+  "author": "sjdhome",
   "description": "kurisu backend server",
   "main": "dist/main.js",
   "type": "module",
@@ -12,7 +13,6 @@
     "test": "cross-env NODE_ENV=development vitest",
     "typecheck": "tsc --noEmit"
   },
-  "author": "sjdhome",
   "devDependencies": {
     "@types/node": "^20.10.4",
     "@types/pg": "^8.10.9",
