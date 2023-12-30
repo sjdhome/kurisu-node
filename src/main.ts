@@ -12,7 +12,7 @@ app.get("/v1/blog/post/:id/content/", getPostContent);
 
 app.setNotFoundHandler((request, reply) => {
   logger.warn(
-    `${request.ip} try to access ${request.url}, and it's not found.`,
+    `${request.ip} ${request.method} ${request.url}`,
   );
   reply.statusCode = 404;
   return "There is no such page. How did you get here?";
@@ -28,8 +28,7 @@ logger.info(`Running on port ${port}`);
 try {
   await app.listen({ port });
 } catch (err) {
-  logger.error("Server down!");
-  logger.error(err);
+  logger.error(err, "Server crashed!");
   process.exit(1);
 }
 
