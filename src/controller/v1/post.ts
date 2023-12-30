@@ -4,7 +4,7 @@ import logger from "../../logger.js";
 import { postService } from "../../service/post.js";
 import { postTagService } from "../../service/post_tag.js";
 
-// URL: /v1/blog/post/
+// GET /v1/blog/post/
 async function getPosts(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -22,10 +22,11 @@ async function getPosts(
     }),
   );
   reply.type("application/json");
+  logger.info(`${request.ip} GET /v1/blog/posts/`);
   return JSON.stringify(postsWithTag);
 }
 
-// URL: /v1/blog/post/:id/
+// GET /v1/blog/post/:id/
 async function getPost(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -45,10 +46,11 @@ async function getPost(
   };
   delete postWithTag.content;
   reply.type("application/json");
+  logger.info(`${request.ip} GET /v1/blog/post/${id}/`);
   return JSON.stringify(postWithTag);
 }
 
-// URL: /v1/blog/post/:id/content/
+// GET /v1/blog/post/:id/content/
 async function getPostContent(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -61,6 +63,7 @@ async function getPostContent(
     return;
   }
   reply.type("text/markdown; charset=utf-8");
+  logger.info(`${request.ip} GET /v1/blog/post/${id}/content/`);
   return post.content;
 }
 
