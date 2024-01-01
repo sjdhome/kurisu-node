@@ -1,35 +1,15 @@
 import { describe, vi, test, beforeAll, expect, beforeEach } from "vitest";
-import { TagRepository, TagRepositoryImpl } from "./tag.js";
+import { tagRepository } from "./tag.js";
 
-const mocks = vi.hoisted(() => {
-  return {
-    query: vi.fn(),
-    release: vi.fn(),
-  };
-});
-
-vi.mock("../postgresql.js", () => {
-  const getClient = vi.fn().mockReturnValue({
-    query: mocks.query,
-    release: mocks.release,
-  });
-  return { getClient };
-});
-
-let tagRepository: TagRepository;
-
-beforeAll(() => {
-  tagRepository = new TagRepositoryImpl();
-});
-
-beforeEach(() => {
-  mocks.query.mockClear();
-  mocks.release.mockClear();
+const query = await vi.hoisted(async () => {
+  const { setup, query } = await import("../database.mock.js");
+  await setup();
+  return query;
 });
 
 describe("find", async () => {
   test("normal call", async () => {
-    mocks.query.mockResolvedValue({
+    query.mockResolvedValue({
       rows: [
         {
           id: "default",
@@ -38,33 +18,30 @@ describe("find", async () => {
       ],
     });
     const tag = await tagRepository.find("default");
-    expect(mocks.query).toHaveBeenCalledWith(
-      "SELECT * FROM tag WHERE id = $1",
-      ["default"],
-    );
+    expect(query).toHaveBeenCalledWith("SELECT * FROM tag WHERE id = $1", [
+      "default",
+    ]);
     expect(tag).toEqual({
       id: "default",
       name: "Default",
     });
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty", async () => {
-    mocks.query.mockResolvedValue({ rows: [] });
+    query.mockResolvedValue({ rows: [] });
     expect(tagRepository.find("")).rejects.toThrowError("Empty id");
   });
 
   test("not found", async () => {
-    mocks.query.mockResolvedValue({ rows: [] });
+    query.mockResolvedValue({ rows: [] });
     const tag = await tagRepository.find("balabala");
     expect(tag).toBeNull();
-    expect(mocks.release).toHaveBeenCalled();
   });
 });
 
 describe("findAll", async () => {
   test("normal call", async () => {
-    mocks.query.mockResolvedValue({
+    query.mockResolvedValue({
       rows: [
         {
           id: "default",
@@ -77,7 +54,7 @@ describe("findAll", async () => {
       ],
     });
     const tags = await tagRepository.findAll();
-    expect(mocks.query).toHaveBeenCalledWith("SELECT * FROM tag");
+    expect(query).toHaveBeenCalledWith("SELECT * FROM tag");
     expect(tags).toEqual([
       {
         id: "default",
@@ -88,25 +65,22 @@ describe("findAll", async () => {
         name: "Note",
       },
     ]);
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty", async () => {
-    mocks.query.mockResolvedValue({ rows: [] });
+    query.mockResolvedValue({ rows: [] });
     const tags = await tagRepository.findAll();
     expect(tags).toEqual([]);
-    expect(mocks.release).toHaveBeenCalled();
   });
 });
 
 describe("update", async () => {
   test("normal call", async () => {
     await tagRepository.update("default", { name: "Fault" });
-    expect(mocks.query).toHaveBeenCalledWith(
+    expect(query).toHaveBeenCalledWith(
       "UPDATE tag SET name = $1 WHERE id = $2",
       ["Fault", "default"],
     );
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {
@@ -125,11 +99,10 @@ describe("update", async () => {
 describe("create", async () => {
   test("normal call", async () => {
     await tagRepository.create({ id: "default", name: "Default" });
-    expect(mocks.query).toHaveBeenCalledWith(
+    expect(query).toHaveBeenCalledWith(
       "INSERT INTO tag (id, name) VALUES ($1, $2)",
       ["default", "Default"],
     );
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {
@@ -154,10 +127,9 @@ describe("create", async () => {
 describe("remove", async () => {
   test("normal call", async () => {
     await tagRepository.remove("default");
-    expect(mocks.query).toHaveBeenCalledWith("DELETE FROM tag WHERE id = $1", [
+    expect(query).toHaveBeenCalledWith("DELETE FROM tag WHERE id = $1", [
       "default",
     ]);
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {

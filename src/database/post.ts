@@ -1,6 +1,5 @@
+import { objectToSQL, withClient } from "../database.js";
 import { Post } from "../entity/post.js";
-import { getClient } from "../postgresql.js";
-import { snakeCase } from "change-case";
 
 interface PostRepository {
   find(id: string): Promise<Post | null>;
@@ -15,9 +14,10 @@ class PostRepositoryImpl implements PostRepository {
     if (id.length === 0) {
       throw new Error("Empty id");
     }
-    const client = await getClient();
-    const result = await client.query("SELECT * FROM post WHERE id = $1", [id]);
-    client.release();
+    const result = await withClient(
+      async (client) =>
+        await client.query("SELECT * FROM post WHERE id = $1", [id]),
+    );
     if (result.rows.length === 0) {
       return null;
     }
@@ -38,9 +38,9 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   async findAll(): Promise<Post[]> {
-    const client = await getClient();
-    const result = await client.query("SELECT * FROM post");
-    client.release();
+    const result = await withClient(
+      async (client) => await client.query("SELECT * FROM post"),
+    );
     return result.rows.map((row) => {
       const post: Post = {
         id: row.id,
@@ -58,51 +58,49 @@ class PostRepositoryImpl implements PostRepository {
     });
   }
 
-  async update(id: string, post: Partial<Omit<Post, "id">>): Promise<void> {
+  async update(id: string, post: Partial<Post>): Promise<void> {
     if (id.length === 0) {
       throw new Error("Empty id");
     }
     if (Object.entries(post).length === 0) {
       throw new Error("Empty post");
     }
-    const client = await getClient();
-    const keys: string[] = [];
-    const values: any[] = [];
-    for (const [key, value] of Object.entries(post)) {
-      keys.push(`${snakeCase(key)} = $${keys.length + 1}`);
-      values.push(value);
-    }
-    await client.query(
-      `UPDATE post SET ${keys.join(", ")} WHERE id = $${keys.length + 1}`,
-      [...values, id],
+    const { sql, values } = objectToSQL(post, ["id"]);
+    await withClient(
+      async (client) =>
+        await client.query(
+          `UPDATE post SET ${sql} WHERE id = $${values.length + 1}`,
+          [...values, id],
+        ),
     );
-    client.release();
   }
 
   async create(post: Post): Promise<void> {
-    const client = await getClient();
-    await client.query(
-      "INSERT INTO post (id, title, created, edited, author, description, commentable, visible, pin_to_top, content) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
-      [
-        post.id,
-        post.title,
-        post.created,
-        post.edited,
-        post.author,
-        post.description,
-        post.commentable,
-        post.visible,
-        post.pinToTop,
-        post.content,
-      ],
+    await withClient(
+      async (client) =>
+        await client.query(
+          "INSERT INTO post (id, title, created, edited, author, description, commentable, visible, pin_to_top, content) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+          [
+            post.id,
+            post.title,
+            post.created,
+            post.edited,
+            post.author,
+            post.description,
+            post.commentable,
+            post.visible,
+            post.pinToTop,
+            post.content,
+          ],
+        ),
     );
-    client.release();
   }
 
   async remove(id: string): Promise<void> {
-    const client = await getClient();
-    await client.query("DELETE FROM post WHERE id = $1", [id]);
-    client.release();
+    await withClient(
+      async (client) =>
+        await client.query("DELETE FROM post WHERE id = $1", [id]),
+    );
   }
 }
 

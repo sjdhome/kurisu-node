@@ -1,35 +1,15 @@
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { PostRepository, PostRepositoryImpl } from "./post.js";
+import { describe, expect, test, vi } from "vitest";
+import { postRepository } from "./post.js";
 
-const mocks = vi.hoisted(() => {
-  return {
-    query: vi.fn(),
-    release: vi.fn(),
-  };
-});
-
-vi.mock("../postgresql.js", () => {
-  const getClient = vi.fn().mockReturnValue({
-    query: mocks.query,
-    release: mocks.release,
-  });
-  return { getClient };
-});
-
-let postRepository: PostRepository;
-
-beforeAll(() => {
-  postRepository = new PostRepositoryImpl();
-});
-
-beforeEach(() => {
-  mocks.query.mockClear();
-  mocks.release.mockClear();
+const query = await vi.hoisted(async () => {
+  const { setup, query } = await import("../database.mock.js");
+  await setup();
+  return query;
 });
 
 describe("find", async () => {
   test("normal call", async () => {
-    mocks.query.mockResolvedValue({
+    query.mockResolvedValue({
       rows: [
         {
           id: "hello-world",
@@ -46,10 +26,9 @@ describe("find", async () => {
       ],
     });
     const post = await postRepository.find("hello-world");
-    expect(mocks.query).toHaveBeenCalledWith(
-      "SELECT * FROM post WHERE id = $1",
-      ["hello-world"],
-    );
+    expect(query).toHaveBeenCalledWith("SELECT * FROM post WHERE id = $1", [
+      "hello-world",
+    ]);
     expect(post).toEqual({
       id: "hello-world",
       title: "Hello World",
@@ -62,18 +41,15 @@ describe("find", async () => {
       pinToTop: false,
       content: "Hello World",
     });
-    expect(mocks.release).toHaveBeenCalledOnce();
   });
 
   test("not found", async () => {
-    mocks.query.mockResolvedValue({ rows: [] });
+    query.mockResolvedValue({ rows: [] });
     const post = await postRepository.find("hello-world");
-    expect(mocks.query).toHaveBeenCalledWith(
-      "SELECT * FROM post WHERE id = $1",
-      ["hello-world"],
-    );
+    expect(query).toHaveBeenCalledWith("SELECT * FROM post WHERE id = $1", [
+      "hello-world",
+    ]);
     expect(post).toBeNull();
-    expect(mocks.release).toHaveBeenCalled();
   });
 
   test("empty id", async () => {
@@ -82,7 +58,7 @@ describe("find", async () => {
 });
 
 test("findAll", async () => {
-  mocks.query.mockResolvedValue({
+  query.mockResolvedValue({
     rows: [
       {
         id: "hello-world",
@@ -109,7 +85,7 @@ test("findAll", async () => {
     ],
   });
   const posts = await postRepository.findAll();
-  expect(mocks.query).toHaveBeenCalledWith("SELECT * FROM post");
+  expect(query).toHaveBeenCalledWith("SELECT * FROM post");
   expect(posts).toEqual([
     {
       id: "hello-world",
@@ -134,7 +110,6 @@ test("findAll", async () => {
       pinToTop: false,
     },
   ]);
-  expect(mocks.release).toHaveBeenCalledOnce();
 });
 
 describe("update", async () => {
@@ -144,7 +119,7 @@ describe("update", async () => {
       pinToTop: true,
       content: "Never",
     });
-    expect(mocks.query).toHaveBeenCalledWith(
+    expect(query).toHaveBeenCalledWith(
       "UPDATE post SET title = $1, pin_to_top = $2, content = $3 WHERE id = $4",
       ["Goodbye World", true, "Never", "hello-world"],
     );
@@ -153,11 +128,10 @@ describe("update", async () => {
       content: "Never",
       pinToTop: true,
     });
-    expect(mocks.query).toHaveBeenCalledWith(
+    expect(query).toHaveBeenCalledWith(
       "UPDATE post SET title = $1, content = $2, pin_to_top = $3 WHERE id = $4",
       ["Goodbye World", "Never", true, "hello-world"],
     );
-    expect(mocks.release).toHaveBeenCalledTimes(2);
   });
 
   test("empty id", async () => {
