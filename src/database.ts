@@ -8,13 +8,6 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD ?? "postgres",
 });
 
-/**
- * @deprecated use withClient() instead.
- */
-async function getClient() {
-  return await pool.connect();
-}
-
 async function withClient<T>(
   fn: (client: pg.PoolClient) => Promise<T>,
 ): Promise<T> {
@@ -43,4 +36,4 @@ function objectToSQL(
   };
 }
 
-export { getClient, withClient, objectToSQL };
+export { withClient, objectToSQL };
