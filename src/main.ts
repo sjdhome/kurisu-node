@@ -11,9 +11,7 @@ app.get("/v1/blog/post/:id/", getPost);
 app.get("/v1/blog/post/:id/content/", getPostContent);
 
 app.setNotFoundHandler((request, reply) => {
-  logger.warn(
-    `${request.ip} ${request.method} ${request.url}`,
-  );
+  logger.warn(`${request.ip} ${request.method} ${request.url}`);
   reply.statusCode = 404;
   return "There is no such page. How did you get here?";
 });
