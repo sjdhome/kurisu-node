@@ -1,6 +1,5 @@
-import { snakeCase } from "change-case";
+import { objectToSQL, withClient } from "../database.js";
 import { Tag } from "../entity/tag.js";
-import { getClient, objectToSQL, withClient } from "../database.js";
 
 interface TagRepository {
   find(id: string): Promise<Tag | null>;
