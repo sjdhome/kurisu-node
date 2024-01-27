@@ -9,6 +9,7 @@ const port = Number.parseInt(process.env.PORT || "3000");
 app.get("/v1/blog/post/", getPosts);
 app.get("/v1/blog/post/:id/", getPost);
 app.get("/v1/blog/post/:id/content/", getPostContent);
+app.head("/", async () => "");
 
 app.setNotFoundHandler((request, reply) => {
   logger.warn(`${request.ip} ${request.method} ${request.url}`);
